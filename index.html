@@ -1,6 +1,7 @@
 <textarea name="json_data" id=""></textarea>
 
 <button type="button" class="js-submit">send</button>
+<button type="button" class="js-clear">clear</button>
 
 <pre id="output" style="background:#1e1e1e; color:#dcdcdc; padding:10px; border-radius:8px;"></pre>
 <script>
@@ -13,7 +14,10 @@
             document.getElementById("output").textContent = 'Invalid JSON: ' + e.message;
         }
     });
-
+    document.querySelector('.js-clear').addEventListener('click', function() {
+        document.querySelector('textarea[name="json_data"]').value = '';
+        document.getElementById("output").textContent = '';
+    });
 function syntaxHighlight(json) {
   json = JSON.stringify(json, null, 2);
   return json
