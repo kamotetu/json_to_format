@@ -1,0 +1,45 @@
+<textarea name="json_data" id=""></textarea>
+
+<button type="button" class="js-submit">send</button>
+
+<pre id="output" style="background:#1e1e1e; color:#dcdcdc; padding:10px; border-radius:8px;"></pre>
+<script>
+    document.querySelector('.js-submit').addEventListener('click', function() {
+        const jsonData = document.querySelector('textarea[name="json_data"]').value;
+        try {
+            const parsedData = JSON.parse(jsonData);
+            document.getElementById("output").innerHTML = syntaxHighlight(parsedData);
+        } catch (e) {
+            document.getElementById("output").textContent = 'Invalid JSON: ' + e.message;
+        }
+    });
+
+function syntaxHighlight(json) {
+  json = JSON.stringify(json, null, 2);
+  return json
+    .replace(/(&)/g, "&amp;")
+    .replace(/(>)/g, "&gt;")
+    .replace(/(<)/g, "&lt;")
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+      match => {
+        let cls = 'number';
+        if (/^"/.test(match)) {
+          cls = /:$/.test(match) ? 'key' : 'string';
+        } else if (/true|false/.test(match)) {
+          cls = 'boolean';
+        } else if (/null/.test(match)) {
+          cls = 'null';
+        }
+        return `<span class="${cls}">${match}</span>`;
+      });
+}
+
+</script>
+
+<style>
+.string { color: #ce9178; }
+.number { color: #b5cea8; }
+.boolean { color: #569cd6; }
+.null { color: #9cdcfe; }
+.key { color: #dcdcaa; }
+</style>
