@@ -6,8 +6,9 @@
 <pre id="output" style="background:#1e1e1e; color:#dcdcdc; padding:10px; border-radius:8px;"></pre>
 <script>
     document.querySelector('.js-submit').addEventListener('click', function() {
-        const jsonData = document.querySelector('textarea[name="json_data"]').value;
+        let jsonData = document.querySelector('textarea[name="json_data"]').value;
         try {
+            jsonData = jsonData.replace(/[\r\n\t]/g, '');
             const parsedData = JSON.parse(jsonData);
             document.getElementById("output").innerHTML = syntaxHighlight(parsedData);
         } catch (e) {
