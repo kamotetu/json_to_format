@@ -29,7 +29,7 @@
                     position: sticky;
                     top: 0;
                     background-color: white;
-                    padding-bottom: 10px;
+                    padding-bottom: 30px;
                 }
                 .title_area {
                     margin-bottom: 10px;
@@ -57,7 +57,25 @@
                         <label for="json_file">ファイルアップロード</label>
                         <input type="file" name="json_file" accept=".json" id="jsonFileInput">
                     </div>
-                    <button type="button" class="js-clear">clear</button>
+                    <div style="display: flex;">
+                        <div class="button_wrapper">
+                            <button
+                                type="button"
+                                class="js-copy"
+                                style="height: 100%;"
+                            >copy</button>
+                        </div>
+                        <div class="button_wrapper" style="margin-left: 10px;">
+                            <button
+                                type="button"
+                                class="js-clear"
+                                style="height: 100%;"
+                            >clear</button>
+                        </div>
+                    </div>
+                    <div class="js-copy_message_area">
+
+                    </div>
                 </div>
             </div>
 
@@ -119,6 +137,28 @@
                         }
                     };
                     reader.readAsText(file);
+                });
+
+                document.querySelector('.js-copy').addEventListener('click', function() {
+                    const output = document.getElementById("output");
+                    if (output.textContent) {
+                        navigator.clipboard.writeText(output.textContent).then(() => {
+                            document.querySelector('.js-copy_message_area').textContent = 'Copied to clipboard!';
+                            setTimeout(() => {
+                                document.querySelector('.js-copy_message_area').textContent = '';
+                            }, 2000);
+                        }, () => {
+                            document.querySelector('.js-copy_message_area').textContent = 'Failed to copy text.';
+                            setTimeout(() => {
+                                document.querySelector('.js-copy_message_area').textContent = '';
+                            }, 2000);
+                        });
+                    } else {
+                        document.querySelector('.js-copy_message_area').textContent = 'Nothing to copy.';
+                            setTimeout(() => {
+                                document.querySelector('.js-copy_message_area').textContent = '';
+                            }, 2000);
+                    }
                 });
             </script>
         </main>
