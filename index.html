@@ -8,7 +8,7 @@
         <main>
             <style>
                 body {
-                    margin: 0 0 !important;
+                    /* margin: 0 0 !important; */
                 }
                 .string {
                     color: #ce9178; 
@@ -45,18 +45,26 @@
             <div class="head_area">
                 <header>JSON TO FORMAT</header>
                 <div class="title_area" style="margin-top: 10px;">
-                    <label for="title">タイトル</label>
-                    <input id="title" type="text" placeholder="taro.json">
+                    <label for="title"></label>
+                    <input id="title" type="text" placeholder="メモ: 例) taro.json">
                 </div>
                 <div class="input_area">
                     <div class="js-textarea_area">
-                        <label for="json_data">入力フォーム</label>
-                        <textarea id="json_data" name="json_data" placeholder='{"name": "Taro"}'></textarea>
+                        <label for="json_data"></label>
+                        <textarea style="height: 100%;" id="json_data" name="json_data" placeholder='{"name": "Taro"}'></textarea>
                         <button type="button" class="js-submit">send</button>
                     </div>
                     <div class="js-file_upload_area">
-                        <label for="json_file">ファイルアップロード</label>
-                        <input type="file" name="json_file" accept=".json" id="jsonFileInput">
+                        <label
+                            for="jsonFileInput"
+                            style="display: block; cursor: pointer; background-color: #f0f0f0; padding: 10px; border-radius: 5px;"
+                            class="js-file_upload"
+                        >
+                            <span class="js-file_upload_text">ファイルアップロード</span>
+                            <span class="js-file_upload_sub_text" style="display: block; font-size: 0.8em; color: #666;">JSONファイルを選択してください</span>
+                            <input style="display: none;" type="file" name="json_file" accept=".json" id="jsonFileInput">
+                        </label>
+                        
                     </div>
                     <div style="display: flex;">
                         <div class="button_wrapper">
@@ -99,6 +107,7 @@
                     document.querySelector('textarea[name="json_data"]').value = '';
                     document.getElementById("output").textContent = '';
                     document.querySelector('#jsonFileInput').value = '';
+                    document.querySelector('.js-file_upload_sub_text').textContent = 'JSONファイルを選択してください';
                 });
                 function syntaxHighlight(json) {
                     json = JSON.stringify(json, null, 2);
@@ -127,18 +136,25 @@
                         return;
                     }
                     const file = fileInput.files[0];
+                    loadFile(file);
+                });
+
+                function loadFile (file) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         try {
                             const jsonData = event.target.result;
                             const parsedData = toFormat(jsonData);
                             document.getElementById("output").innerHTML = syntaxHighlight(parsedData);
+                            document.querySelector('.js-file_upload_text').textContent = 'ファイルアップロード';
+                            document.querySelector('.js-file_upload_sub_text').textContent = file.name;
                         } catch (e) {
                             document.getElementById("output").textContent = 'Invalid JSON: ' + e.message;
+                            document.querySelector('.js-file_upload_sub_text').textContent = 'JSONファイルを選択してください';
                         }
                     };
                     reader.readAsText(file);
-                });
+                }
 
                 document.querySelector('.js-copy').addEventListener('click', function() {
                     const output = document.getElementById("output");
@@ -159,6 +175,20 @@
                             setTimeout(() => {
                                 document.querySelector('.js-copy_message_area').textContent = '';
                             }, 2000);
+                    }
+                });
+
+                document.querySelector('.js-file_upload').addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    if (e.dataTransfer.types[0] === 'Files') {
+                        document.querySelector('.js-file_upload_text').textContent = 'ドロップ！';
+                    }
+                });
+                document.querySelector('.js-file_upload').addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    if (e.dataTransfer.types[0] === 'Files') {
+                        const file = e.dataTransfer.files[0];
+                        loadFile(file);
                     }
                 });
             </script>
