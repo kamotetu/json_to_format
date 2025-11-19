@@ -1,50 +1,126 @@
-<textarea name="json_data" id=""></textarea>
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>json to format</title>
+    </head>
+    <body>
+        <main>
+            <style>
+                body {
+                    margin: 0 0 !important;
+                }
+                .string {
+                    color: #ce9178; 
+                }
+                .number {
+                    color: #b5cea8;
+                }
+                .boolean {
+                    color: #569cd6;
+                }
+                .null {
+                    color: #9cdcfe;
+                }
+                .key {
+                    color: #dcdcaa;
+                }
+                .head_area {
+                    position: sticky;
+                    top: 0;
+                    background-color: white;
+                    padding-bottom: 10px;
+                }
+                .title_area {
+                    margin-bottom: 10px;
+                }
+                .input_area {
+                    display: flex;
+                    gap: 20px;
+                }
+                #output {
+                    margin: 0 0 !important;
+                }
+            </style>
+            <div class="head_area">
+                <div class="title_area">
+                    <label for="title">タイトル</label>
+                    <input id="title" type="text">
+                </div>
+                <div class="input_area">
+                    <div class="js-textarea_area">
+                        <label for="json_data">入力フォーム</label>
+                        <textarea id="json_data" name="json_data" id=""></textarea>
+                        <button type="button" class="js-submit">send</button>
+                    </div>
+                    <div class="js-file_upload_area">
+                        <label for="json_file">ファイルアップロード</label>
+                        <input type="file" name="json_file" accept=".json" id="jsonFileInput">
+                    </div>
+                    <button type="button" class="js-clear">clear</button>
+                </div>
+            </div>
 
-<button type="button" class="js-submit">send</button>
-<button type="button" class="js-clear">clear</button>
+            <pre id="output" style="background:#1e1e1e; color:#dcdcdc; padding:10px; border-radius:8px;"></pre>
+            <script>
+                function toFormat (json_data) {
+                    json_data = json_data.replace(/[\r\n\t]/g, '');
+                    return JSON.parse(json_data);
+                }
+                document.querySelector('.js-submit').addEventListener('click', function() {
+                    let jsonData = document.querySelector('textarea[name="json_data"]').value;
+                    try {
+                        const parsedData = toFormat(jsonData);
+                        document.getElementById("output").innerHTML = syntaxHighlight(parsedData);
+                    } catch (e) {
+                        document.getElementById("output").textContent = 'Invalid JSON: ' + e.message;
+                    }
+                });
+                document.querySelector('.js-clear').addEventListener('click', function() {
+                    document.querySelector('textarea[name="json_data"]').value = '';
+                    document.getElementById("output").textContent = '';
+                    document.querySelector('#jsonFileInput').value = '';
+                });
+                function syntaxHighlight(json) {
+                    json = JSON.stringify(json, null, 2);
+                    return json
+                        .replace(/(&)/g, "&amp;")
+                        .replace(/(>)/g, "&gt;")
+                        .replace(/(<)/g, "&lt;")
+                        .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+                            match => {
+                                let cls = 'number';
+                                if (/^"/.test(match)) {
+                                cls = /:$/.test(match) ? 'key' : 'string';
+                                } else if (/true|false/.test(match)) {
+                                cls = 'boolean';
+                                } else if (/null/.test(match)) {
+                                cls = 'null';
+                                }
+                                return `<span class="${cls}">${match}</span>`;
+                        });
+                }
 
-<pre id="output" style="background:#1e1e1e; color:#dcdcdc; padding:10px; border-radius:8px;"></pre>
-<script>
-    document.querySelector('.js-submit').addEventListener('click', function() {
-        let jsonData = document.querySelector('textarea[name="json_data"]').value;
-        try {
-            jsonData = jsonData.replace(/[\r\n\t]/g, '');
-            const parsedData = JSON.parse(jsonData);
-            document.getElementById("output").innerHTML = syntaxHighlight(parsedData);
-        } catch (e) {
-            document.getElementById("output").textContent = 'Invalid JSON: ' + e.message;
-        }
-    });
-    document.querySelector('.js-clear').addEventListener('click', function() {
-        document.querySelector('textarea[name="json_data"]').value = '';
-        document.getElementById("output").textContent = '';
-    });
-function syntaxHighlight(json) {
-  json = JSON.stringify(json, null, 2);
-  return json
-    .replace(/(&)/g, "&amp;")
-    .replace(/(>)/g, "&gt;")
-    .replace(/(<)/g, "&lt;")
-    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-      match => {
-        let cls = 'number';
-        if (/^"/.test(match)) {
-          cls = /:$/.test(match) ? 'key' : 'string';
-        } else if (/true|false/.test(match)) {
-          cls = 'boolean';
-        } else if (/null/.test(match)) {
-          cls = 'null';
-        }
-        return `<span class="${cls}">${match}</span>`;
-      });
-}
-
-</script>
-
-<style>
-.string { color: #ce9178; }
-.number { color: #b5cea8; }
-.boolean { color: #569cd6; }
-.null { color: #9cdcfe; }
-.key { color: #dcdcaa; }
-</style>
+                document.querySelector('#jsonFileInput').addEventListener('change', function(e) {
+                    const fileInput = e.target;
+                    if (fileInput.files.length === 0) {
+                        alert('Please select a JSON file to upload.');
+                        return;
+                    }
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            const jsonData = event.target.result;
+                            const parsedData = toFormat(jsonData);
+                            document.getElementById("output").innerHTML = syntaxHighlight(parsedData);
+                        } catch (e) {
+                            document.getElementById("output").textContent = 'Invalid JSON: ' + e.message;
+                        }
+                    };
+                    reader.readAsText(file);
+                });
+            </script>
+        </main>
+    </body>
+</html>
