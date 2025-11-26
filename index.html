@@ -52,22 +52,18 @@
                     <div class="js-textarea_area">
                         <label for="json_data"></label>
                         <textarea style="height: 100%;" id="json_data" name="json_data" placeholder='{"name": "Taro"}'></textarea>
-                        <button type="button" class="js-submit">send</button>
-                    </div>
-                    <div class="js-file_upload_area">
-                        <label
-                            for="jsonFileInput"
-                            style="display: block; cursor: pointer; background-color: #f0f0f0; padding: 10px; border-radius: 5px;"
-                            class="js-file_upload"
-                        >
-                            <span class="js-file_upload_text">ファイルアップロード</span>
-                            <span class="js-file_upload_sub_text" style="display: block; font-size: 0.8em; color: #666;">JSONファイルを選択してください</span>
-                            <input style="display: none;" type="file" name="json_file" accept=".json" id="jsonFileInput">
-                        </label>
-                        
+                        <!-- <button type="button" class="js-clear" style="height: 100%;">clear</button>
+                        <button type="button" class="js-submit" style="height: 100%;">send</button> -->
                     </div>
                     <div style="display: flex;">
                         <div class="button_wrapper">
+                            <button
+                                type="button"
+                                class="js-submit"
+                                style="height: 100%;"
+                            >send</button>
+                        </div>
+                        <div class="button_wrapper" style="margin-left: 10px;">
                             <button
                                 type="button"
                                 class="js-copy"
@@ -81,6 +77,18 @@
                                 style="height: 100%;"
                             >clear</button>
                         </div>
+                    </div>
+                    <div class="js-file_upload_area">
+                        <label
+                            for="jsonFileInput"
+                            style="display: block; cursor: pointer; background-color: #f0f0f0; padding: 10px; border-radius: 5px;"
+                            class="js-file_upload"
+                        >
+                            <span class="js-file_upload_text">ファイルアップロード</span>
+                            <span class="js-file_upload_sub_text" style="display: block; font-size: 0.8em; color: #666;">JSONファイルを選択してください</span>
+                            <input style="display: none;" type="file" name="json_file" accept=".json" id="jsonFileInput">
+                        </label>
+                        
                     </div>
                     <div class="js-copy_message_area">
 
